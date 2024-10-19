@@ -1,0 +1,13 @@
+The mobile phone shall have a mass of less than 150 grams.
+While there is no card in the ATM, the ATM shall display “insert card to begin”.
+When “mute” is selected, the laptop shall suppress all audio output.
+If an invalid credit card number is entered, then the website shall display “please re-enter credit card details”.
+The system respond to user input.
+If withdrawal request exceeds balance, then the ATM shall display “balance exceeded”
+If the computed airspeed fault flag is set, then the control system shall use modelled airspeed.
+While the aircraft is in-flight, the control system shall maintain engine fuel flow above XXlbs/sec
+The kitchen system shall have an input hatch.
+When the chef inserts a potato to the input hatch, the kitchen system shall peel the potato.
+While the kitchen system is in maintenance mode, the kitchen system shall reject all input.
+If a spoon is inserted to the input hatch, then the kitchen system shall eject the spoon.
+Where the kitchen system has a food freshness sensor, the kitchen system shall detect rotten foodstuffs.
