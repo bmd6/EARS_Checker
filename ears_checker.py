@@ -359,21 +359,132 @@ def write_org(report: Dict, file_path: str):
         print(f"IOError while writing to the file '{file_path}': {e}", file=sys.stderr)
         sys.exit(1)
 
+def print_ears_info():
+    """
+    Print information about EARS syntax, including types and expected patterns.
+    """
+    info = """
+=== EARS Syntax Information ===
+
+**What is EARS?**
+
+The Easy Approach to Requirements Syntax (EARS) is a mechanism to gently constrain textual requirements. EARS patterns provide structured guidance that enable authors to write high-quality textual requirements. EARS uses a small set of keywords to denote different clauses of a requirement, following temporal logic. The syntax closely matches common English usage, making it intuitive.
+
+**EARS Patterns:**
+
+1. **Ubiquitous Requirements**
+   - **Pattern:**
+     ```
+     The <system name> shall <system response>.
+     ```
+   - **Examples:**
+     - The kitchen system shall have an input hatch.
+     - The control system shall prevent engine overspeed.
+     - The installer software shall be available in Greek.
+
+2. **Event-Driven Requirements**
+   - **Pattern:**
+     ```
+     When <optional preconditions> <trigger>, the <system> shall <system response>.
+     ```
+   - **Examples:**
+     - When the chef inserts a potato to the input hatch, the kitchen system shall peel the potato.
+     - When continuous ignition is commanded by the aircraft, the control system shall switch on continuous ignition.
+     - When an Unregistered Device is plugged into a USB port, the OS shall attempt to locate and load the driver for the device.
+
+3. **State-Driven Requirements**
+   - **Pattern:**
+     ```
+     While <in a state>, the <system> shall <system response>.
+     ```
+   - **Examples:**
+     - While the kitchen system is in maintenance mode, the kitchen system shall reject all input.
+     - While the aircraft is in-flight, the control system shall maintain engine fuel flow above XXlbs/sec.
+     - While in Low Power Mode, the software shall keep the display brightness at the Minimum Level.
+
+4. **Unwanted Behavior Requirements**
+   - **Pattern:**
+     ```
+     If <optional preconditions> <trigger>, then the <system> shall <system response>.
+     ```
+   - **Examples:**
+     - If a spoon is inserted to the input hatch, then the kitchen system shall eject the spoon.
+     - If the computed airspeed fault flag is set, then the control system shall use modeled airspeed.
+     - If the memory checksum is invalid, then the software shall display an error message.
+
+5. **Optional Feature Requirements**
+   - **Pattern:**
+     ```
+     Where <feature>, the <system> shall <system response>.
+     ```
+   - **Examples:**
+     - Where the kitchen system has a food freshness sensor, the kitchen system shall detect rotten foodstuffs.
+     - Where hardware encryption is installed, the software shall encrypt data using the hardware instead of using a software algorithm.
+     - Where a HDMI port is present, the software shall allow the user to select HD content for viewing.
+
+6. **Complex Requirements**
+   - **Pattern:**
+     ```
+     While <precondition(s)>, When <trigger>, the <system> shall <system response>.
+     ```
+     *or any combination of multiple EARS clauses.*
+   - **Examples:**
+     - When the landing gear button is depressed once, if the software detects that the landing gear does not lock into position, then the software shall sound an alarm.
+     - While in start up mode, when the software detects an external flash card, the software shall use the external flash card to store photos.
+     - Where a second optical drive is installed, when the user selects to copy disks, the software shall display an option to copy directly from one optical drive to the other.
+
+**Ruleset:**
+
+- **Clause Order:** The clauses must appear in the following order if multiple are present:
+  1. While
+  2. When
+  3. Where
+  4. If
+  5. Then
+  6. shall
+
+- **Keywords:**
+  - **While:** Denotes a state-driven requirement.
+  - **When:** Denotes an event-driven requirement.
+  - **Where:** Denotes an optional feature requirement.
+  - **If/Then:** Denotes unwanted behavior requirements.
+  - **shall:** Specifies the system response.
+
+**Usage Tips:**
+
+- Ensure that each requirement adheres to the correct pattern and clause order.
+- Use the appropriate keywords to clearly define the nature of the requirement.
+- For complex behaviors, combine multiple EARS patterns while maintaining the correct clause sequence.
+
+===================================
+"""
+    print(info)
+
 def parse_arguments():
     """
     Parse command-line arguments.
     """
     parser = argparse.ArgumentParser(description='Assess requirements for EARS syntax compliance.')
-    parser.add_argument('input_file', help='Path to the input file containing requirements.')
+    parser.add_argument('input_file', nargs='?', help='Path to the input file containing requirements.')
     parser.add_argument('-o', '--output', help='Path to the output file.', default=None)
     parser.add_argument('-f', '--format', 
                         choices=['terminal', 'txt', 'csv', 'md', 'org'], 
                         default='terminal', 
                         help='Output format: terminal, txt, csv, md, org. Default is terminal.')
+    parser.add_argument('-i', '--info', action='store_true', help='Display information about EARS syntax and exit.')
     return parser.parse_args()
 
 def main():
     args = parse_arguments()
+
+    if args.info:
+        print_ears_info()
+        sys.exit(0)
+
+    if not args.input_file:
+        print("Error: Input file is required unless using the --info flag.", file=sys.stderr)
+        sys.exit(1)
+
     requirements = read_requirements(args.input_file)
     validator = EARSValidator()
     report = generate_report(requirements, validator)
